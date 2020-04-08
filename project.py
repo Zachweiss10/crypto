@@ -63,6 +63,7 @@ class Block:
         self.dataLength = unpackedData[5]
         unpackedData = struct.unpack_from("{dataLength}s".format(dataLength=self.dataLength), data, 68)
         self.data = (unpackedData[0]).decode()
+        return unpackedData
 
 
 # Successful commands should exit with 0
@@ -86,6 +87,11 @@ def init():
     if(checkExist()):
         # Maybe add code to check the contents of the file to see that the info inside 
         # is actually the initial block
+        blockFile = open(BCHOC_FILE_PATH, 'rb')
+        data = blockFile.read()
+        blockFile.close()
+        block = Block()
+        block.unpackData(data)
         print("Blockchain file found with INITIAL block.")
         dieWithSuccess()
     else:
