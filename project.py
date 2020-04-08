@@ -74,6 +74,7 @@ def dieWithSuccess():
 
 # Unsuccessful commands should exit with non-zero
 def dieWithError():
+    print("error")
     exit(666)
 
 # Checks if blockchain file exists
@@ -111,26 +112,22 @@ def add(inputString):
     itemID = []
     if inputString[2] != "-c":
         dieWithError()
-    numOfCaseItems = int(len(inputString) / 2)
-    print(inputString)
     caseID = inputString[3]
     inputString = inputString[4:]
-    for i in range(0,numOfCaseItems, 2):
+    numOfCaseItems = len(inputString)
+    #print(inputString)
+    for i in range(0,numOfCaseItems):
         if i % 2 == 1:
             itemID.append(inputString[i])
         else:
             if inputString[i] != "-i":
                 dieWithError() 
-
-    #create new block
-    blockFile = open(BCHOC_FILE_PATH, 'a')
-    for i in range(0, len(itemID)):
-        now = maya.now()
-        encoded = now.rfc3339().encode()
-        packedData = Block(prevHash=bytes(0x00), state="CHECKEDIN", caseID=bytes(0x00), evidenceID= int(itemID[i]), dataLength=0, data="").packData()
+    print(len(itemID))
+    blockFile = open(BCHOC_FILE_PATH, 'ab')    #create new block
+    for j in range(0, len(itemID)):
+        packedData = Block(prevHash=bytes(0x00), state="CHECKEDIN", caseID=bytes(0x00), evidenceID= int(itemID[j]), dataLength=0, data="").packData()
         blockFile.write(packedData)
         print("Added item:",end=" ")
-        print(itemID[i])
 
     blockFile.close()
 
