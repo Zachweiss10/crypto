@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-
 import hashlib
 import os.path
 import sys
 import datetime
 import struct
+import maya
+blockchain = []
+from project import blockchain
 
 BCHOC_FILE_PATH = "./blocParty"
 
@@ -102,14 +104,16 @@ def init():
         print("Blockchain file not found. Created INITIAL block.")
         dieWithSuccess()
 
+#add command created n numbers of items for a specific caseID
 def add(inputString):
-
     #Store case id, and (multiple) itemId
     #Ensure input errors end with a dieWithError()
     itemID = []
     if inputString[2] != "-c":
         dieWithError()
     numOfCaseItems = int(len(inputString) / 2)
+    print(inputString)
+    caseID = inputString[3]
     inputString = inputString[4:]
     for i in range(0,numOfCaseItems, 2):
         if i % 2 == 1:
@@ -119,6 +123,16 @@ def add(inputString):
                 dieWithError() 
 
     #create new block
+    blockFile = open(BCHOC_FILE_PATH, 'a')
+    for i in range(0, len(itemID)):
+        now = maya.now()
+        encoded = now.rfc3339().encode()
+        packedData = Block(prevHash=bytes(0x00), state="CHECKEDIN", caseID=bytes(0x00), evidenceID= int(itemID[i]), dataLength=0, data="").packData()
+        blockFile.write(packedData)
+        print("Added item:",end=" ")
+        print(itemID[i])
+
+    blockFile.close()
 
     return 0
 
