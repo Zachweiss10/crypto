@@ -50,8 +50,19 @@ class Block:
             return
         fmtString = "20s d 16s I 11s I {dataLength}s".format(dataLength=self.dataLength)
         packedData = struct.pack(fmtString, self.prevHash, self.timestamp, self.caseID, self.evidenceID,
-                                 str.encode(self.state), 14, str.encode(self.data))
+                                 str.encode(self.state), self.dataLength, str.encode(self.data))
         return packedData
+
+    def unpackData(self, data):
+        unpackedData = struct.unpack_from("20s d 16s I 11s I", data, 0)
+        self.prevHash = unpackedData[0]
+        self.timestamp = unpackedData[1]
+        self.caseID = unpackedData[2]
+        self.evidenceID = unpackedData[3]
+        self.state = (unpackedData[4]).decode()
+        self.dataLength = unpackedData[5]
+        unpackedData = struct.unpack_from("{dataLength}s".format(dataLength=self.dataLength), data, 68)
+        self.data = (unpackedData[0]).decode()
 
 
 # Successful commands should exit with 0
@@ -75,6 +86,11 @@ if (sys.argv[1] == "init"):
     if(checkExist()):
         # Maybe add code to check the contents of the file to see that the info inside 
         # is actually the initial block
+        blockFile = open(BCHOC_FILE_PATH, 'rb')
+        data = blockFile.read()
+        blockFile.close()
+        block = Block()
+        block.unpackData(data)
         print("Blockchain file found with INITIAL block.")
         dieWithSuccess()
     else:
