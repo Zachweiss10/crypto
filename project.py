@@ -103,10 +103,21 @@ def init():
         dieWithSuccess()
 
 def add(inputString):
-    caseID = []
+
+    #Store case id, and (multiple) itemId
+    #Ensure input errors end with a dieWithError()
+    itemID = []
+    if inputString[2] != "-c":
+        dieWithError()
     numOfCaseItems = int(len(inputString) / 2)
-    for i in range(0,numOfCaseItems+1, 2):
-        caseID.append(inputString[5+i])
+    inputString = inputString[4:]
+    for i in range(0,numOfCaseItems, 2):
+        if i % 2 == 1:
+            itemID.append(inputString[i])
+        else:
+            if inputString[i] != "-i":
+                dieWithError() 
+
     #create new block
 
     return 0
