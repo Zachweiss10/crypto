@@ -71,7 +71,7 @@ def checkExist():
 
 # Init command creates blockchain file with initial block if it
 # doesn't already exist
-if (sys.argv[1] == "init"):
+def init():
     if(checkExist()):
         # Maybe add code to check the contents of the file to see that the info inside 
         # is actually the initial block
@@ -85,5 +85,40 @@ if (sys.argv[1] == "init"):
         print("Blockchain file not found. Created INITIAL block.")
         dieWithSuccess()
 
-else:
-    dieWithError()
+def add(inputString):
+    caseID = []
+    numOfCaseItems = int(len(inputString) / 2)
+    for i in range(0,numOfCaseItems+1, 2):
+        caseID.append(inputString[5+i])
+    #create new block
+
+    return 0
+
+def checkout():
+    return
+
+def log():
+    return
+
+def remove():
+    return
+
+def main():
+    inputString = sys.argv
+    if (inputString[1] == "init"):
+        init()
+    elif inputString[1] == "add":
+        add(inputString)
+    elif inputString[1] == "checkout":
+        checkout()
+    elif inputString[1] == "log":
+        log()
+    elif inputString[1] == "remove":
+        remove()
+    else:
+        dieWithError()
+
+
+
+if __name__ == '__main__':
+    main()
