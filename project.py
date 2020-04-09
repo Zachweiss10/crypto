@@ -4,6 +4,7 @@ import os.path
 import sys
 import datetime
 import struct
+import argparse
 import maya
 blockchain = []
 from project import blockchain
@@ -52,7 +53,7 @@ class Block:
             return
         fmtString = "20s d 16s I 11s I {dataLength}s".format(dataLength=self.dataLength)
         packedData = struct.pack(fmtString, self.prevHash, self.timestamp, self.caseID, self.evidenceID,
-                                 str.encode(self.state), self.dataLength, str.encode(self.data))
+                                 self.state.encode(), self.dataLength, self.data.encode())
         return packedData
 
     def unpackData(self, data):
@@ -140,6 +141,14 @@ def add(inputString):
     return 0
 
 def checkout():
+
+    #verify input string
+    if sys.argv[2] != "-i":
+        dieWithError()
+
+
+
+
     return
 
 def log():
@@ -149,13 +158,29 @@ def remove():
     return
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("command", action="store", type=str)
+    ap.add_argument("-c", required=False, type=str)
+    ap.add_argument("-i", required=False, action="append", nargs="+", type=int)
+    ap.add_argument("-r", required=False, type=bool)
+    ap.add_argument("-n", required=False, type=int)
+    ap.add_argument("-o", required=False, type=str)
+
+    args = ap.parse_args()
+    command = args.command
+    caseID = args.c
+    evidenceID = args.i
+    reverse = args.r
+    listNum = args.n
+    identification = args.o
+
     inputString = sys.argv
     if (inputString[1] == "init"):
         init()
     elif inputString[1] == "add":
         add(inputString)
     elif inputString[1] == "checkout":
-        checkout()
+        checkout(inputString)
     elif inputString[1] == "log":
         log()
     elif inputString[1] == "remove":
