@@ -44,7 +44,7 @@ def init():
         print("Blockchain file found with INITIAL block.")
         dieWithSuccess()
     else:
-        packedData = Block(prevHash=bytes(0x00), state="INITIAL", caseID=bytes(0x00), evidenceID=0, dataLength=14, data="Initial Block").packData()
+        packedData = Block(prevHash=bytes(0x00), state="INITIAL", caseID="e29271a2-7aba-11ea-bc55-0242ac130003", evidenceID=0, dataLength=14, data="Initial Block").packData()
         blockFile = open(BCHOC_FILE_PATH, 'wb')
         blockFile.write(packedData)
         blockFile.close()
@@ -95,7 +95,56 @@ def checkout(evidenceIDList):
 
     return
 
-def log():
+def log(reverse, numberOfEntries, itemID=None, caseID = None):
+    blockList = parse()
+    caseList = []
+    itemList = []
+    printList = []
+
+    if caseID != None:
+        for block in blockList:
+            if caseID == block.caseID:
+                caseList.append(block)
+        if len(caseList) == 0 :
+            print("no entries match that case ID!")
+            dieWithError()
+    else:
+        caseList = blockList
+
+    if itemID != None:
+        for block in blockList:
+            if itemID == block.evidenceID:
+                itemList.append(block)
+        if len(itemList) == 0 :
+            print("no entries match that evidence ID!")
+            dieWithError()
+    else:
+        itemList = blockList
+
+    printList = [value for value in itemList if value in caseList]
+
+    if numberOfEntries == None:
+        numberOfEntries = len(printList)
+
+
+    if(reverse):
+        for x in range(numberOfEntries -1, -1, -1):
+            dt = datetime.datetime.fromtimestamp(printList[x].timestamp)
+            dt_iso = dt.isoformat()
+            print("Case: {c}".format(c=(printList[x].caseID) ) )
+            print("Item: {i}".format(i=printList[x].evidenceID) )
+            print("Action: {a}".format(a=printList[x].state) )
+            print("Time: {t}".format(t=dt_iso))
+            print("")
+    else:
+        for x in range(numberOfEntries):
+            dt = datetime.datetime.fromtimestamp(printList[x].timestamp)
+            dt_iso = dt.isoformat()
+            print("Case: {c}".format(c=(printList[x].caseID) ) )
+            print("Item: {i}".format(i=printList[x].evidenceID) )
+            print("Action: {a}".format(a=printList[x].state) )
+            print("Time: {t}".format(t=dt_iso))
+            print("")
     return
 
 def remove():
@@ -106,9 +155,10 @@ def main():
     ap.add_argument("command", action="store", type=str)
     ap.add_argument("-c", required=False, type=str)
     ap.add_argument("-i", required=False, action="append", nargs="+", type=int)
-    ap.add_argument("-r", required=False, type=bool)
+    ap.add_argument("-r", action="store_true")
     ap.add_argument("-n", required=False, type=int)
     ap.add_argument("-o", required=False, type=str)
+    ap.add_argument("-y", required=False, type=str)
 
     args = ap.parse_args()
     command = args.command
@@ -116,7 +166,8 @@ def main():
     evidenceID = args.i
     reverse = args.r
     listNum = args.n
-    identification = args.o
+    owner = args.o
+    reason = args.y
 
     if (command == "init"):
         init()

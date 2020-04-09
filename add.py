@@ -9,7 +9,7 @@ from parse import *
 
 BCHOC_FILE_PATH = "./blocParty"
 
-def add(caseId, itemID):
+def add(caseID, itemID):
     #check if blockchain file exists
 
 
@@ -28,7 +28,7 @@ def add(caseId, itemID):
         #print(type(val))
         #print(itemID)
         #print(type(itemID[j]))
-        packedData = Block(prevHash=bytes(0x00), timestamp=timestamp, state="CHECKEDIN", caseID=bytes(0x00), evidenceID= int(itemID[j][0]), dataLength=0, data="").packData()
+        packedData = Block(prevHash=bytes(0x00), timestamp=timestamp, state="CHECKEDIN", caseID=caseID, evidenceID= int(itemID[j][0]), dataLength=0, data="").packData()
         blockFile.write(packedData)
         print("Added item:",end=" ")
         print(itemID[j])

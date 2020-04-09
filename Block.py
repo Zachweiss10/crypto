@@ -49,7 +49,7 @@ class Block:
             print( "No data provided, the data couldn't be packed")
             return
         fmtString = "20s d 16s I 11s I {dataLength}s".format(dataLength=self.dataLength)
-        packedData = struct.pack(fmtString, self.prevHash, self.timestamp, self.caseID, self.evidenceID,
+        packedData = struct.pack(fmtString, self.prevHash, self.timestamp, self.caseID.encode(), self.evidenceID,
                                  self.state.encode(), self.dataLength, self.data.encode())
         self._dataString = packedData
         self._hash = hashlib.sha1(packedData)
@@ -59,7 +59,7 @@ class Block:
         unpackedData = struct.unpack_from("20s d 16s I 11s I", data, 0)
         self.prevHash = unpackedData[0]
         self.timestamp = unpackedData[1]
-        self.caseID = unpackedData[2]
+        self.caseID = (unpackedData[2]).decode()
         self.evidenceID = unpackedData[3]
         self.state = (unpackedData[4]).decode()
         self.dataLength = unpackedData[5]
