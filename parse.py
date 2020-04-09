@@ -5,7 +5,7 @@ import datetime
 import struct
 from Block import Block
 blockList = []
-
+itemIDS = []
 BCHOC_FILE_PATH = "./blocParty"
 
 def parse():
@@ -38,6 +38,7 @@ def parse():
             # set itemID to None
             itemID = None
             print("itemID is: {0}".format(itemID))
+            itemIDS.append(itemID)
             currPos += 4
 
             # set state
@@ -84,6 +85,7 @@ def parse():
             # set itemID
             itemID = int.from_bytes(data[currPos:currPos + 4], "little", signed=False)
             print("itemID is: {0}".format(itemID))
+            itemIDS.append(itemID)
             currPos += 4
 
             # set state
