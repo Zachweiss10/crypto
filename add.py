@@ -10,6 +10,10 @@ from parse import *
 BCHOC_FILE_PATH = "./blocParty"
 
 def add(caseId, itemID):
+    #check if blockchain file exists
+
+
+
     #need to hash parent
 
 

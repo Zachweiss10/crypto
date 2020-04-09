@@ -178,6 +178,8 @@ def main():
     if (command == "init"):
         init()
     elif command == "add":
+        if not os.path.exists("./blocParty"):
+            dieWithError()
         add(caseID, evidenceID)
     elif command == "checkout":
         checkout(evidenceID)
