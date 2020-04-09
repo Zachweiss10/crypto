@@ -23,6 +23,8 @@ class Block:
         self.state = state
         self.dataLength = dataLength
         self.data = data
+        self._dataString = None
+        self._hash = None
 
     def packData(self):
         if ( self.timestamp == None ):
@@ -48,7 +50,9 @@ class Block:
             return
         fmtString = "20s d 16s I 11s I {dataLength}s".format(dataLength=self.dataLength)
         packedData = struct.pack(fmtString, self.prevHash, self.timestamp, self.caseID, self.evidenceID,
-                                 str.encode(self.state), self.dataLength, str.encode(self.data))
+                                 self.state.encode(), self.dataLength, self.data.encode())
+        self._dataString = packedData
+        self._hash = hashlib.sha1(packedData)
         return packedData
 
     def unpackData(self, data):
@@ -61,13 +65,14 @@ class Block:
         self.dataLength = unpackedData[5]
         unpackedData = struct.unpack_from("{dataLength}s".format(dataLength=self.dataLength), data, 68)
         self.data = (unpackedData[0]).decode()
-        return unpackedData
+
+        self._dataString = data[0:68 + self.dataLength]
+        self._hash = hashlib.sha1(self._dataString)
 
     def getHash(self):
         if self._hash != None:
             return self._hash
         if self._dataString != None:
             return hashlib.sha1(self._dataString)
-
         print("Get hash was called on a block without data! Call pack or unpack data to generate a hash")
         return 0

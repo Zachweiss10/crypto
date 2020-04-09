@@ -17,9 +17,9 @@ def add(caseId, itemID):
     #need to hash parent
     num = len(blockList)
     print(num)
-    parent = blockList[num-1].unpackData(b"")
+    parent = blockList[num-1]
     prevHash = parent.getHash()
-
+    prevHash = prevHash.hexdigest()
 
 
     #check
@@ -32,15 +32,20 @@ def add(caseId, itemID):
         #print(type(val))
         #print(itemID)
         #print(type(itemID[j]))
-        packedData = Block(prevHash=bytes(0x00), timestamp=timestamp, state="CHECKEDIN", caseID=caseId.encode(), evidenceID= int(itemID[j][0]), dataLength=0, data="").packData()
+        packedData = Block(prevHash=prevHash.encode(), timestamp=timestamp, state="CHECKEDIN", caseID=caseId.encode(), evidenceID= int(itemID[j][0]), dataLength=0, data="").packData()
         blockFile.write(packedData)
-        blockList.append(packedData)
         print("Added item:",end=" ")
         print(itemID[j])
         print("  Status: CHECKEDIN")
         print("  Time of action: ",end="")
         print(currTime)
-
+        print(type(packedData))
+        num = len(blockList)
+        parent = Block()
+        parent.unpackData(packedData)
+        blockList.append(parent)
+        prevHash = parent.getHash()
+        prevHash = prevHash.hexdigest()
     blockFile.close()
 
     return 0

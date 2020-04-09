@@ -13,10 +13,12 @@ def parse():
     currPos = 0
     blockEnd = 0
     data = parseFile.read()
+    datax = data
     while(currPos < len(data)):
         # Check if first block is Initial
         if(data[:20] == b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'):
-
+            readBlock = Block()
+            readBlock.unpackData(datax)
             #set previous hash to None
             pHash = None
             print("initial block found in parser")
@@ -57,9 +59,12 @@ def parse():
             print("End of block at: {0}".format(currPos))
 
             thisBlock = Block(pHash, timeStamp, caseID, itemID, state, dataLength, dataString)
-            blockList.append(thisBlock)
+            blockList.append(readBlock)
+            datax = datax[(68 + int(readBlock.dataLength)):]
 
         else:
+            readBlock = Block()
+            readBlock.unpackData(data)
             #set previous hash
             pHash = data[currPos:currPos + 20].decode('ascii')
             print("next block found in parser")
@@ -98,8 +103,8 @@ def parse():
             currPos += dataLength
             print("End of block at: {0}".format(currPos))
 
-            thisBlock = Block(pHash, timeStamp, caseID, itemID, state, dataLength, dataString)
-            blockList.append(thisBlock)
+            blockList.append(readBlock)
+            data = data[(68 + int(readBlock.dataLength)):]
 
     parseFile.close()
     return blockList
