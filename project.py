@@ -6,7 +6,7 @@ import datetime
 import struct
 from add import add
 from Block import Block
-from parse import parse
+from parse import *
 blockList = []
 from project import blockList
 
