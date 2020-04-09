@@ -22,7 +22,9 @@ def add(caseId, itemID):
     prevHash = prevHash.hexdigest()
 
 
-    #check
+    #check if command contains duplicate itemId's
+    if len(itemID) !=len(set(itemID)):
+        exit(666)
 
     #append the block
     blockFile = open(BCHOC_FILE_PATH, 'ab') 
