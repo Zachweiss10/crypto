@@ -30,6 +30,8 @@ class Block:
         self.state = state
         self.dataLength = dataLength
         self.data = data
+        self._dataString = None
+        self._hash = None
 
     def packData(self):
         if ( self.timestamp == None ):
@@ -56,6 +58,8 @@ class Block:
         fmtString = "20s d 16s I 11s I {dataLength}s".format(dataLength=self.dataLength)
         packedData = struct.pack(fmtString, self.prevHash, self.timestamp, self.caseID, self.evidenceID,
                                  self.state.encode(), self.dataLength, self.data.encode())
+        self._dataString = packedData
+        self._hash = hashlib.sha1(packedData)
         return packedData
 
     def unpackData(self, data):
@@ -68,6 +72,17 @@ class Block:
         self.dataLength = unpackedData[5]
         unpackedData = struct.unpack_from("{dataLength}s".format(dataLength=self.dataLength), data, 68)
         self.data = (unpackedData[0]).decode()
+
+        self._dataString = data[0:68 + self.dataLength]
+        self._hash = hashlib.sha1(self._dataString)
+
+    def getHash(self):
+        if self._hash != None:
+            return self._hash
+        if self._dataString != None:
+            return hashlib.sha1(self._dataString)
+
+        print("Get hash was called on a block without data! Call pack or unpack data to generate a hash")
 
 
 # Successful commands should exit with 0
@@ -201,17 +216,32 @@ def init():
         blockFile = open(BCHOC_FILE_PATH, 'wb')
         blockFile.write(packedData)
         blockFile.close()
-        print("Blockchain file not found. Created INITIAL block." + chr(7))
+        print("Blockchain file not found. Created INITIAL block.")
         dieWithSuccess()
 
 #add command created n numbers of items for a specific caseID
 
 
-def checkout():
+def checkout(evidenceID):
+    maxTime = 0
+    recentBlock = None
 
-    #verify input string
-    if sys.argv[2] != "-i":
+    #verify input
+    if evidenceID == None:
         dieWithError()
+
+    for block in blockList:
+        if evidenceID == block.evidenceID:
+            if block.timestamp > maxTime:
+                maxTime = max(maxTime, block.timestamp)
+                recentBlock = block
+
+    #if the evidenceID doesn't exist
+    if recentBlock == None:
+        dieWithError()
+
+    if recentBlock.state == "CHECKEDIN":
+        newBlock = Block()
 
 
 
