@@ -9,8 +9,7 @@ import maya
 from add import add
 from Block import Block
 from parse import *
-blockList = []
-from project import blockList
+
 
 BCHOC_FILE_PATH = "./blocParty"
 
@@ -146,16 +145,15 @@ def main():
     listNum = args.n
     identification = args.o
 
-    inputString = sys.argv
-    if (inputString[1] == "init"):
+    if (command == "init"):
         init()
-    elif inputString[1] == "add":
-        add(inputString)
-    elif inputString[1] == "checkout":
-        checkout(inputString)
-    elif inputString[1] == "log":
-        log()
-    elif inputString[1] == "remove":
+    elif command == "add":
+        add(caseID, evidenceID)
+    elif command == "checkout":
+        checkout(evidenceID)
+    elif command == "log":
+        log(reverse, listNum)
+    elif command == "remove":
         remove()
     else:
         dieWithError()
