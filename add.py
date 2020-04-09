@@ -16,13 +16,14 @@ def add(caseId, itemID):
 
     #need to hash parent
     num = len(blockList)
-    print(num)
+    itemID = sum(itemID, [])
+    print(itemID)
     parent = blockList[num-1]
     prevHash = parent.getHash()
     prevHash = prevHash.hexdigest()
 
 
-    #check if command contains duplicate itemId's
+    #check if command contains duplicate itemId's enter by user
     if len(itemID) !=len(set(itemID)):
         exit(666)
 
@@ -34,14 +35,13 @@ def add(caseId, itemID):
         #print(type(val))
         #print(itemID)
         #print(type(itemID[j]))
-        packedData = Block(prevHash=prevHash.encode(), timestamp=timestamp, state="CHECKEDIN", caseID=caseId.encode(), evidenceID= int(itemID[j][0]), dataLength=0, data="").packData()
+        packedData = Block(prevHash=prevHash.encode(), timestamp=timestamp, state="CHECKEDIN", caseID=caseId.encode(), evidenceID= int(itemID[j]), dataLength=0, data="").packData()
         blockFile.write(packedData)
         print("Added item:",end=" ")
         print(itemID[j])
         print("  Status: CHECKEDIN")
         print("  Time of action: ",end="")
         print(currTime)
-        print(type(packedData))
         num = len(blockList)
         parent = Block()
         parent.unpackData(packedData)
