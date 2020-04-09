@@ -5,7 +5,7 @@ import sys
 import datetime
 import struct
 from Block import Block
-from parse import parse
+from parse import *
 
 BCHOC_FILE_PATH = "./blocParty"
 
@@ -26,7 +26,11 @@ def add(inputString):
                 dieWithError() 
     #need to hash parent
     parse()
-    #create new block
+
+
+    #check
+
+    #append the block
     blockFile = open(BCHOC_FILE_PATH, 'ab') 
     for j in range(0, len(itemID)):
         currTime = datetime.datetime.now(datetime.timezone.utc)
