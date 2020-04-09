@@ -10,9 +10,13 @@ from parse import *
 BCHOC_FILE_PATH = "./blocParty"
 
 def add(caseId, itemID):
-    #check if blockchain file exists
 
 
+
+
+    #check if command contains duplicate itemId's enter by user
+    if len(itemID) !=len(set(itemID)):
+        exit(666)
 
     #need to hash parent
     num = len(blockList)
@@ -22,10 +26,6 @@ def add(caseId, itemID):
     prevHash = parent.getHash()
     prevHash = prevHash.hexdigest()
 
-
-    #check if command contains duplicate itemId's enter by user
-    if len(itemID) !=len(set(itemID)):
-        exit(666)
 
     #append the block
     blockFile = open(BCHOC_FILE_PATH, 'ab') 
@@ -43,6 +43,7 @@ def add(caseId, itemID):
         print("  Time of action: ",end="")
         print(currTime)
         num = len(blockList)
+        #add to global list, create hash of recently added Block for next iteration
         parent = Block()
         parent.unpackData(packedData)
         blockList.append(parent)
