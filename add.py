@@ -25,6 +25,7 @@ def add(inputString):
             if inputString[i] != "-i":
                 dieWithError() 
     #need to hash parent
+    parse()
     #create new block
     blockFile = open(BCHOC_FILE_PATH, 'ab') 
     for j in range(0, len(itemID)):

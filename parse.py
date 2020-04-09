@@ -4,6 +4,10 @@ import sys
 import datetime
 import struct
 from Block import Block
+
+
+BCHOC_FILE_PATH = "./blocParty"
+
 def parse():
     parseFile = open(BCHOC_FILE_PATH, 'rb')
     global blockList
