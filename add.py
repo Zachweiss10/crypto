@@ -15,6 +15,8 @@ def add(caseId, itemID):
 
 
     #need to hash parent
+    num = len(blockList)
+    print(num)
 
 
 

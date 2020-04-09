@@ -62,3 +62,12 @@ class Block:
         unpackedData = struct.unpack_from("{dataLength}s".format(dataLength=self.dataLength), data, 68)
         self.data = (unpackedData[0]).decode()
         return unpackedData
+
+    def getHash(self):
+        if self._hash != None:
+            return self._hash
+        if self._dataString != None:
+            return hashlib.sha1(self._dataString)
+
+        print("Get hash was called on a block without data! Call pack or unpack data to generate a hash")
+        return 0

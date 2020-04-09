@@ -89,6 +89,7 @@ def main():
     elif command == "add":
         if not os.path.exists("./blocParty"):
             dieWithError()
+        parse()
         add(caseID, evidenceID)
     elif command == "checkout":
         checkout(evidenceID)
