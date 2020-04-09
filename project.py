@@ -68,7 +68,6 @@ class Block:
         self.dataLength = unpackedData[5]
         unpackedData = struct.unpack_from("{dataLength}s".format(dataLength=self.dataLength), data, 68)
         self.data = (unpackedData[0]).decode()
-        return unpackedData
 
 
 # Successful commands should exit with 0
@@ -86,6 +85,103 @@ def checkExist():
         return True
     else:
         return False
+
+def parse():
+    parseFile = open(BCHOC_FILE_PATH, 'rb')
+    blockList = []
+    currPos = 0
+    blockEnd = 0
+    data = parseFile.read()
+    while(currPos < len(data)):
+        # Check if first block is Initial
+        if(data[:20] == b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'):
+
+            #set previous hash to None
+            pHash = None
+            print("initial block found in parser")
+            print("pHash is: {0}".format(pHash))
+            currPos += 24
+
+            # set timeStamp
+            timeStamp = data[currPos:currPos + 8]
+            print("Timestamp is: {0}".format(timeStamp))
+            currPos += 8
+
+            # set caseID to none
+            caseID = None
+            print("caseID is: {0}".format(caseID))
+            currPos += 16
+
+            # set itemID to None
+            itemID = None
+            print("itemID is: {0}".format(itemID))
+            currPos += 4
+
+            # set state
+            state = data[currPos:currPos + 11].decode('ascii')
+            print("State is: {0}".format(state))
+            currPos += 12
+
+            #set dataLength
+            dataLength = int.from_bytes(data[currPos:currPos + 4], "little", signed=False)
+            print("data length is: {0}".format(dataLength))
+            currPos += 4
+
+            #set dataString
+            dataString = data[currPos:currPos + dataLength].decode('ascii')
+            print("dataString is: {0}".format(dataString))
+
+            # keep track of end of block
+            currPos += dataLength
+            print("End of block at: {0}".format(currPos))
+
+            thisBlock = Block(pHash, timeStamp, caseID, itemID, state, dataLength, dataString)
+            blockList.append(thisBlock)
+
+        else:
+            #set previous hash
+            pHash = data[currPos:currPos + 20].decode('ascii')
+            print("next block found in parser")
+            print("pHash is: {0}".format(pHash))
+            currPos += 24
+
+            # set timeStamp
+            timeStamp = data[currPos:currPos + 8]
+            print("Timestamp is: {0}".format(timeStamp))
+            currPos += 8
+
+            # set caseID
+            caseID = int.from_bytes(data[currPos:currPos + 16], "little", signed=False)
+            print("caseID is: {0}".format(caseID))
+            currPos += 16
+
+            # set itemID
+            itemID = int.from_bytes(data[currPos:currPos + 4], "little", signed=False)
+            print("itemID is: {0}".format(itemID))
+            currPos += 4
+
+            # set state
+            state = data[currPos:currPos + 11].decode('ascii')
+            print("State is: {0}".format(state))
+            currPos += 12
+
+            #set dataLength
+            dataLength = int.from_bytes(data[currPos:currPos + 4], "little", signed=False)
+            print("data length is: {0}".format(dataLength))
+            currPos += 4
+
+            #set dataString
+            dataString = data[currPos:currPos + dataLength].decode('ascii')
+            print("dataString is: {0}".format(dataString))
+            # keep track of end of block
+            currPos += dataLength
+            print("End of block at: {0}".format(currPos))
+
+            thisBlock = Block(pHash, timeStamp, caseID, itemID, state, dataLength, dataString)
+            blockList.append(thisBlock)
+
+    parseFile.close()
+    return blockList
 
 # Init command creates blockchain file with initial block if it
 # doesn't already exist
@@ -105,7 +201,7 @@ def init():
         blockFile = open(BCHOC_FILE_PATH, 'wb')
         blockFile.write(packedData)
         blockFile.close()
-        print("Blockchain file not found. Created INITIAL block.")
+        print("Blockchain file not found. Created INITIAL block." + chr(7))
         dieWithSuccess()
 
 #add command created n numbers of items for a specific caseID
@@ -155,6 +251,15 @@ def main():
         log(reverse, listNum)
     elif command == "remove":
         remove()
+    elif command == "verify":
+        if(checkExist()):
+            returnList = parse()
+            print("Initialblock is: prevHash-{0}, timeStamp-{1}, caseID-{2}, itemID-{3}, state-{4}, dataLength-{5}, dataString-{6}".format(returnList[0].prevHash, returnList[0].timestamp, returnList[0].caseID, returnList[0].evidenceID, returnList[0].state, returnList[0].dataLength, returnList[0].data))
+        else:
+            print("Transactions in blockchain: 0")
+            print("State of blockchain: ERROR")
+            print("Bad block: N/A")
+            print("Blockchain file does not exist")
     else:
         dieWithError()
 
