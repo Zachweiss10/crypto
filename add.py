@@ -17,6 +17,8 @@ def add(caseId, itemID):
     #need to hash parent
     num = len(blockList)
     print(num)
+    parent = blockList[num-1].unpackData(b"")
+    prevHash = parent.getHash()
 
 
 
