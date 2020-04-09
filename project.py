@@ -178,7 +178,7 @@ def main():
     if (command == "init"):
         init()
     elif command == "add":
-        if not os.path.exists("./blocParty"):
+        if not os.path.exists(BCHOC_FILE_PATH):
             dieWithError()
         add(caseID, evidenceID)
     elif command == "checkout":
