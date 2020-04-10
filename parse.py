@@ -6,6 +6,7 @@ import struct
 from Block import Block
 blockList = []
 itemIDS = []
+
 BCHOC_FILE_PATH = "./blocParty"
 
 def parse():
@@ -64,7 +65,7 @@ def parse():
 
         else:
             readBlock = Block()
-            readBlock.unpackData(data)
+            readBlock.unpackData(datax)
             #set previous hash
             pHash = data[currPos:currPos + 20].decode('ascii')
             print("next block found in parser")
@@ -83,8 +84,8 @@ def parse():
 
             # set itemID
             itemID = int.from_bytes(data[currPos:currPos + 4], "little", signed=False)
-            print("itemID is: {0}".format(itemID))
             itemIDS.append(itemID)
+            print("itemID is: {0}".format(itemID))
             currPos += 4
 
             # set state
@@ -105,7 +106,7 @@ def parse():
             print("End of block at: {0}".format(currPos))
 
             blockList.append(readBlock)
-            data = data[(68 + int(readBlock.dataLength)):]
+            datax = datax[(68 + int(readBlock.dataLength)):]
 
     parseFile.close()
     return blockList, itemIDS

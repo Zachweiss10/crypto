@@ -32,7 +32,6 @@ def add(caseId, itemID):
     if len(itemIDS) !=len(set(itemIDS)): 
         exit(666) 
 
-    
 
 
     #append the block
@@ -51,6 +50,7 @@ def add(caseId, itemID):
         #add to global list, create hash of recently added Block for next iteration
         parent = Block()
         parent.unpackData(packedData)
+        print(parent.prevHash)
         blockList.append(parent)
         prevHash = parent.getHash()
         prevHash = prevHash.hexdigest()
