@@ -10,9 +10,10 @@ from add import add
 from Block import Block
 from parse import parse, itemIDS, blockList
 from checkout import checkout
+import uuid
 
 
-BCHOC_FILE_PATH = "./blocParty"
+BCHOC_FILE_PATH = os.environ['BCHOC_FILE_PATH'].strip()
 
 
 # Successful commands should exit with 0
@@ -45,7 +46,7 @@ def init():
         print("Blockchain file found with INITIAL block.")
         dieWithSuccess()
     else:
-        packedData = Block(prevHash=bytes(0x00), state="INITIAL", caseID="e29271a2-7aba-11ea-bc55-0242ac130003", evidenceID=0, dataLength=14, data="Initial Block").packData()
+        packedData = Block(prevHash=bytes(0x00), state="INITIAL", caseID="00000000-0000-0000-0000-000000000000", evidenceID=0, dataLength=14, data="Initial Block").packData()
         blockFile = open(BCHOC_FILE_PATH, 'wb')
         blockFile.write(packedData)
         blockFile.close()
@@ -57,10 +58,14 @@ def init():
 
 
 def log(reverse, numberOfEntries, itemID=None, caseID = None):
-    blockList = parse()
+    parse()
     caseList = []
     itemList = []
     printList = []
+
+    if blockList == None:
+        print("there are no blocks to be printed!")
+        dieWithError()
 
     if caseID != None:
         for block in blockList:

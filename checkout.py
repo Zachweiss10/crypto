@@ -7,6 +7,8 @@ import struct
 from Block import Block
 from parse import parse, itemIDS, blockList, theCaseID
 
+BCHOC_FILE_PATH = os.environ['BCHOC_FILE_PATH'].strip()
+
 def checkout(evidenceIDList):
     parse()
     maxTime = 0

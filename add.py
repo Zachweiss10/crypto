@@ -9,7 +9,7 @@ from parse import parse, itemIDS, blockList, theCaseID
 
 
 
-BCHOC_FILE_PATH = "./blocParty"
+BCHOC_FILE_PATH = os.environ['BCHOC_FILE_PATH'].strip()
 
 def add(caseId, itemID):
     #need to hash parent
@@ -25,7 +25,7 @@ def add(caseId, itemID):
 
     #check if caseID is the same as the stored item id's case
         #strip excess null bytes
-    caseID_str = blockList[num-1].caseID.decode().rstrip('\x00')
+    caseID_str = blockList[num-1].caseID
     if num>1:
         if caseID_str != caseId:
             print("ERROR: caseIDs don't match")
@@ -51,7 +51,7 @@ def add(caseId, itemID):
     for j in range(0, len(itemID)):
         currTime = datetime.datetime.now(datetime.timezone.utc)
         timestamp = currTime.timestamp()
-        packedData = Block(prevHash=prevHash.encode(), timestamp=timestamp, state="CHECKEDIN", caseID=caseId.encode(), evidenceID= int(itemID[j]), dataLength=0, data="").packData()
+        packedData = Block(prevHash=prevHash.encode(), timestamp=timestamp, state="CHECKEDIN", caseID=caseId, evidenceID= int(itemID[j]), dataLength=0, data="").packData()
         blockFile.write(packedData)
         print("Added item:",end=" ")
         print(itemID[j])
