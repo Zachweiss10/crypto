@@ -8,7 +8,7 @@ import argparse
 import maya
 from add import add
 from Block import Block
-from parse import *
+from parse import parse, itemIDS, blockList
 
 
 BCHOC_FILE_PATH = "./blocParty"
@@ -89,7 +89,6 @@ def main():
     elif command == "add":
         if not os.path.exists("./blocParty"):
             dieWithError()
-        parse()
         add(caseID, evidenceID)
     elif command == "checkout":
         checkout(evidenceID)

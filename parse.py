@@ -38,7 +38,6 @@ def parse():
             # set itemID to None
             itemID = None
             print("itemID is: {0}".format(itemID))
-            itemIDS.append(itemID)
             currPos += 4
 
             # set state
@@ -109,4 +108,4 @@ def parse():
             data = data[(68 + int(readBlock.dataLength)):]
 
     parseFile.close()
-    return blockList
+    return blockList, itemIDS
