@@ -60,7 +60,6 @@ def add(caseId, itemID):
         #add to global list, create hash of recently added Block for next iteration
         parent = Block()
         parent.unpackData(packedData)
-        print(parent.prevHash)
         blockList.append(parent)
         prevHash = parent.getHash()
         prevHash = prevHash.hexdigest()
