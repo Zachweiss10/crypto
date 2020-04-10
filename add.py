@@ -24,7 +24,7 @@ def add(caseId, itemID):
 
 
     #check if caseID is the same as the stored item id's case
-        #strip excess null bytes
+        g#strip excess null bytes
     caseID_str = blockList[num-1].caseID.decode().rstrip('\x00')
     if num>1:
         if caseID_str != caseId:
@@ -37,11 +37,11 @@ def add(caseId, itemID):
         exit(666)
 
 
-    #check if any of the itemIds have duplicates
+    #check if any of the itemIds have duplicates in the entire blockchain
     itemIDS += itemID
     if len(itemIDS) !=len(set(itemIDS)): 
         exit(666) 
-    print(itemIDS)
+    #print(itemIDS)
 
 
     #append the block
