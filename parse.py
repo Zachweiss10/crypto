@@ -5,10 +5,13 @@ import datetime
 import struct
 from Block import Block
 blockList = []
+itemIDS = []
+theCaseID = ""
 
 BCHOC_FILE_PATH = "./blocParty"
 
 def parse():
+    global theCaseID
     parseFile = open(BCHOC_FILE_PATH, 'rb')
     currPos = 0
     blockEnd = 0
@@ -16,7 +19,7 @@ def parse():
     datax = data
     while(currPos < len(data)):
         # Check if first block is Initial
-        if(data[:20] == b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'):
+        if(data[currPos:currPos+20] == b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'):
             readBlock = Block()
             readBlock.unpackData(datax)
             #set previous hash to None
@@ -64,7 +67,7 @@ def parse():
 
         else:
             readBlock = Block()
-            readBlock.unpackData(data)
+            readBlock.unpackData(datax)
             #set previous hash
             pHash = data[currPos:currPos + 20].decode('ascii')
             print("next block found in parser")
@@ -79,10 +82,13 @@ def parse():
             # set caseID
             caseID = int.from_bytes(data[currPos:currPos + 16], "little", signed=False)
             print("caseID is: {0}".format(caseID))
+            print(caseID)
+            theCaseID = str(caseID)
             currPos += 16
 
             # set itemID
             itemID = int.from_bytes(data[currPos:currPos + 4], "little", signed=False)
+            itemIDS.append(itemID)
             print("itemID is: {0}".format(itemID))
             currPos += 4
 
@@ -104,7 +110,7 @@ def parse():
             print("End of block at: {0}".format(currPos))
 
             blockList.append(readBlock)
-            data = data[(68 + int(readBlock.dataLength)):]
+            datax = datax[(68 + int(readBlock.dataLength)):]
 
     parseFile.close()
-    return blockList
+    return 
