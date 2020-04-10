@@ -34,7 +34,7 @@ def add(caseId, itemID):
     #check if command contains duplicate itemId's enter by user
     if len(itemID) !=len(set(itemID)):
         print("ERROR: item duplicate")
-        exit(666)
+        exit(0)
 
 
     #check if any of the itemIds have duplicates in the entire blockchain
@@ -43,8 +43,7 @@ def add(caseId, itemID):
         print("ERROR: item is contained on the blockchain already") 
         exit(666) 
     #print(itemIDS)
-    print("Case: ",end="")
-    print(caseId)
+
 
     #append the block
     blockFile = open(BCHOC_FILE_PATH, 'ab') 
@@ -53,6 +52,8 @@ def add(caseId, itemID):
         timestamp = currTime.timestamp()
         packedData = Block(prevHash=prevHash.encode(), timestamp=timestamp, state="CHECKEDIN", caseID=caseId.encode(), evidenceID= int(itemID[j]), dataLength=0, data="").packData()
         blockFile.write(packedData)
+        print("Case: ",end="")
+        print(caseId)
         print("Added item:",end=" ")
         print(itemID[j])
         print("  Status: CHECKEDIN")
