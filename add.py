@@ -31,7 +31,7 @@ def add(caseId, itemID):
             print(caseID_str)
             print(caseId)
             print("ERROR: caseIDs don't match")
-            exit(666)'''
+            exit(666)
 
     #check if command contains duplicate itemId's enter by user
     if len(itemID) !=len(set(itemID)):

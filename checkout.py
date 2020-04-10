@@ -34,12 +34,20 @@ def checkout(evidenceIDList):
         tempState = "".join(e for e in recentBlock.state if e.isalnum())
         if tempState == "CHECKEDIN":
             pHash = blockList[-1].getHash()
-            newBlock = Block(prevHash=pHash, caseID=recentBlock.caseID, evidenceID=evidenceID[0], state="CHECKEDOUT", dataLength=0, data="" )
+            newBlock = Block(prevHash=pHash.hexdigest().encode(), caseID=recentBlock.caseID, evidenceID=evidenceID[0], state="CHECKEDOUT", dataLength=0, data="" )
             data = newBlock.packData()
             blockFile = open(BCHOC_FILE_PATH, 'ab')
             blockFile.write(data)
             blockFile.close()
             blockList.append(newBlock)
+
+            dt = datetime.datetime.fromtimestamp(newBlock.timestamp)
+            dt_iso = dt.isoformat()
+            print("Case: {c}".format(c=recentBlock.caseID))
+            print("Checked out item: {i}".format(i=evidenceID[0]))
+            print("\tStatus: CHECKEDOUT")
+            print("\tTime of action: {t}".format(t=dt_iso))
+
         else:
             print("block must be checkedin to be checked out!")
             dieWithError()
