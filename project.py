@@ -11,8 +11,8 @@ from Block import Block
 from parse import parse, itemIDS, blockList
 from checkout import checkout
 
-
-BCHOC_FILE_PATH = "./blocParty"
+BCHOC_FILE_PATH = os.environ['BCHOC_FILE_PATH']
+#BCHOC_FILE_PATH = "./blocParty"
 
 
 # Successful commands should exit with 0

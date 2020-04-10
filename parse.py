@@ -8,7 +8,8 @@ blockList = []
 itemIDS = []
 theCaseID = ""
 
-BCHOC_FILE_PATH = "./blocParty"
+BCHOC_FILE_PATH = os.environ['BCHOC_FILE_PATH']
+#BCHOC_FILE_PATH = "./blocParty"
 
 def parse():
     global theCaseID
@@ -82,7 +83,6 @@ def parse():
             # set caseID
             caseID = int.from_bytes(data[currPos:currPos + 16], "little", signed=False)
             print("caseID is: {0}".format(caseID))
-            print(caseID)
             theCaseID = str(caseID)
             currPos += 16
 

@@ -4,8 +4,8 @@ import os.path
 import sys
 import datetime
 import struct
-BCHOC_FILE_PATH = "./blocParty"
-
+#BCHOC_FILE_PATH = "./blocParty"
+BCHOC_FILE_PATH = os.environ['BCHOC_FILE_PATH']
 class Block:
 
     def __init__(self,
