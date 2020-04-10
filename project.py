@@ -5,7 +5,6 @@ import sys
 import datetime
 import struct
 import argparse
-import maya
 from add import add
 from Block import Block
 from parse import *
