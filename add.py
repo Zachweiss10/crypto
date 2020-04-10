@@ -52,6 +52,8 @@ def add(caseId, itemID):
         timestamp = currTime.timestamp()
         packedData = Block(prevHash=prevHash.encode(), timestamp=timestamp, state="CHECKEDIN", caseID=caseId.encode(), evidenceID= int(itemID[j]), dataLength=0, data="").packData()
         blockFile.write(packedData)
+        print("Case: ",end="")
+        print(caseId)
         print("Added item:",end=" ")
         print(itemID[j])
         print("  Status: CHECKEDIN")
