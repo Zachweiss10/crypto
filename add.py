@@ -43,7 +43,8 @@ def add(caseId, itemID):
         print("ERROR: item is contained on the blockchain already") 
         exit(666) 
     #print(itemIDS)
-
+    print("Case: ",end="")
+    print(caseId)
 
     #append the block
     blockFile = open(BCHOC_FILE_PATH, 'ab') 
@@ -52,8 +53,6 @@ def add(caseId, itemID):
         timestamp = currTime.timestamp()
         packedData = Block(prevHash=prevHash.encode(), timestamp=timestamp, state="CHECKEDIN", caseID=caseId.encode(), evidenceID= int(itemID[j]), dataLength=0, data="").packData()
         blockFile.write(packedData)
-        print("Case: ",end="")
-        print(caseId)
         print("Added item:",end=" ")
         print(itemID[j])
         print("  Status: CHECKEDIN")
