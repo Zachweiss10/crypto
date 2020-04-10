@@ -113,4 +113,4 @@ def parse():
             datax = datax[(68 + int(readBlock.dataLength)):]
 
     parseFile.close()
-    return 
+    return blockList, itemIDS, theCaseID
