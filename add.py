@@ -5,7 +5,7 @@ import sys
 import datetime
 import struct
 from Block import Block
-from parse import parse, itemIDS, blockList
+from parse import parse, itemIDS, blockList, theCaseID
 
 
 
@@ -14,6 +14,7 @@ BCHOC_FILE_PATH = "./blocParty"
 def add(caseId, itemID):
     #need to hash parent
     global itemIDS
+    global theCaseID
     parse()
     num = len(blockList)
     itemID = sum(itemID, [])
@@ -21,17 +22,26 @@ def add(caseId, itemID):
     prevHash = parent.getHash()
     prevHash = prevHash.hexdigest()
 
+
+    #check if caseID is the same as the stored item id's case
+        #strip excess null bytes
+    caseID_str = blockList[num-1].caseID.decode().rstrip('\x00')
+    if num>1:
+        if caseID_str != caseId:
+            print("caseIDs don't match error")
+            exit(666)
+
     #check if command contains duplicate itemId's enter by user
     if len(itemID) !=len(set(itemID)):
+        print("item duplicate error")
         exit(666)
 
 
-    print(itemIDS)
     #check if any of the itemIds have duplicates
     itemIDS += itemID
     if len(itemIDS) !=len(set(itemIDS)): 
         exit(666) 
-
+    print(itemIDS)
 
 
     #append the block

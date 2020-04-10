@@ -6,10 +6,12 @@ import struct
 from Block import Block
 blockList = []
 itemIDS = []
+theCaseID = ""
 
 BCHOC_FILE_PATH = "./blocParty"
 
 def parse():
+    global theCaseID
     parseFile = open(BCHOC_FILE_PATH, 'rb')
     currPos = 0
     blockEnd = 0
@@ -17,7 +19,7 @@ def parse():
     datax = data
     while(currPos < len(data)):
         # Check if first block is Initial
-        if(data[:20] == b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'):
+        if(data[currPos:currPos+20] == b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'):
             readBlock = Block()
             readBlock.unpackData(datax)
             #set previous hash to None
@@ -80,6 +82,8 @@ def parse():
             # set caseID
             caseID = int.from_bytes(data[currPos:currPos + 16], "little", signed=False)
             print("caseID is: {0}".format(caseID))
+            print(caseID)
+            theCaseID = str(caseID)
             currPos += 16
 
             # set itemID
@@ -109,4 +113,4 @@ def parse():
             datax = datax[(68 + int(readBlock.dataLength)):]
 
     parseFile.close()
-    return blockList, itemIDS
+    return blockList, itemIDS, theCaseID
