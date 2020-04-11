@@ -50,7 +50,9 @@ class Block:
             print( "No data provided, the data couldn't be packed")
             return
         uuidString = self.caseID.replace("-", "")
+        uuidString = "".join([ uuidString[x:x+2][::-1] for x in range(0, len(uuidString), 2)])
         uuidItem = uuid.UUID(uuidString[::-1])
+
 
         fmtString = "20s d 16s I 11s I {dataLength}s".format(dataLength=self.dataLength)
         packedData = struct.pack(fmtString, self.prevHash, self.timestamp, uuidItem.bytes, self.evidenceID,
@@ -65,7 +67,10 @@ class Block:
         self.timestamp = unpackedData[1]
         caseIDString = str(uuid.UUID(bytes=unpackedData[2]))
         caseIDString = caseIDString.replace("-", "")
-        self.caseID = caseIDString[::-1]
+        caseIDString = caseIDString[::-1]
+        caseIDString = "".join([caseIDString[x:x + 2][::-1] for x in range(0, len(caseIDString), 2)])
+        uuidString = uuid.UUID(caseIDString)
+        self.caseID = str(uuidString)
         self.evidenceID = unpackedData[3]
         self.state = (unpackedData[4]).decode()
         self.dataLength = unpackedData[5]
