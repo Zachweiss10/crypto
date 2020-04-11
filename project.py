@@ -46,7 +46,7 @@ def init():
         print("Blockchain file found with INITIAL block.")
         dieWithSuccess()
     else:
-        packedData = Block(prevHash=bytes(0x00), state="INITIAL", caseID="00000000-0000-0000-0000-000000000000", evidenceID=0, dataLength=14, data="Initial Block").packData()
+        packedData = Block(prevHash=bytes(0x00), timestamp=0, state="INITIAL", caseID="00000000-0000-0000-0000-000000000000", evidenceID=0, dataLength=14, data="Initial block").packData()
         blockFile = open(BCHOC_FILE_PATH, 'wb')
         blockFile.write(packedData)
         blockFile.close()
@@ -95,8 +95,12 @@ def log(reverse, numberOfEntries, itemID=None, caseID = None):
 
     if(reverse):
         for x in range(numberOfEntries -1, -1, -1):
-            dt = datetime.datetime.fromtimestamp(printList[x].timestamp)
-            dt_iso = dt.isoformat()
+            if printList[x].timestamp == 0:
+                dt_iso = 0
+
+            else:
+                dt = datetime.datetime.fromtimestamp(printList[x].timestamp)
+                dt_iso = dt.isoformat()
             print("Case: {c}".format(c=(printList[x].caseID) ) )
             print("Item: {i}".format(i=printList[x].evidenceID) )
             print("Action: {a}".format(a=printList[x].state) )
@@ -104,8 +108,12 @@ def log(reverse, numberOfEntries, itemID=None, caseID = None):
             print("")
     else:
         for x in range(numberOfEntries):
-            dt = datetime.datetime.fromtimestamp(printList[x].timestamp)
-            dt_iso = dt.isoformat()
+            if printList[x].timestamp == 0:
+                dt_iso = 0
+
+            else:
+                dt = datetime.datetime.fromtimestamp(printList[x].timestamp)
+                dt_iso = dt.isoformat()
             print("Case: {c}".format(c=(printList[x].caseID) ) )
             print("Item: {i}".format(i=printList[x].evidenceID) )
             print("Action: {a}".format(a=printList[x].state) )

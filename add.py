@@ -26,12 +26,12 @@ def add(caseId, itemID):
     #check if caseID is the same as the stored item id's case
         #strip excess null bytes
     caseID_str = blockList[num-1].caseID
-    if num>1:
-        if caseID_str != caseId:
-            print(caseID_str)
-            print(caseId)
-            print("ERROR: caseIDs don't match")
-            exit(666)
+    # if num>1:
+    #     if caseID_str != caseId:
+    #         print(caseID_str)
+    #         print(caseId)
+    #         print("ERROR: caseIDs don't match")
+    #         exit(666)
 
     #check if command contains duplicate itemId's enter by user
     if len(itemID) !=len(set(itemID)):
@@ -40,10 +40,10 @@ def add(caseId, itemID):
 
 
     #check if any of the itemIds have duplicates in the entire blockchain
-    itemIDS += itemID
-    if len(itemIDS) !=len(set(itemIDS)):
-        print("ERROR: item is contained on the blockchain already") 
-        exit(666) 
+    # itemIDS += itemID
+    # if len(itemIDS) !=len(set(itemIDS)):
+    #     print("ERROR: item is contained on the blockchain already")
+    #     exit(666)
     #print(itemIDS)
 
 

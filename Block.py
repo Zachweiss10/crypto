@@ -49,7 +49,9 @@ class Block:
         if ( self.data == None and self.dataLength != 0):
             print( "No data provided, the data couldn't be packed")
             return
-        uuidItem = uuid.UUID(self.caseID)
+        uuidString = self.caseID.replace("-", "")
+        uuidItem = uuid.UUID(uuidString[::-1])
+
         fmtString = "20s d 16s I 11s I {dataLength}s".format(dataLength=self.dataLength)
         packedData = struct.pack(fmtString, self.prevHash, self.timestamp, uuidItem.bytes, self.evidenceID,
                                  self.state.encode(), self.dataLength, self.data.encode())
@@ -61,7 +63,9 @@ class Block:
         unpackedData = struct.unpack_from("20s d 16s I 11s I", data, 0)
         self.prevHash = unpackedData[0]
         self.timestamp = unpackedData[1]
-        self.caseID = str(uuid.UUID(bytes=unpackedData[2]))
+        caseIDString = str(uuid.UUID(bytes=unpackedData[2]))
+        caseIDString = caseIDString.replace("-", "")
+        self.caseID = caseIDString[::-1]
         self.evidenceID = unpackedData[3]
         self.state = (unpackedData[4]).decode()
         self.dataLength = unpackedData[5]

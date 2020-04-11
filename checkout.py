@@ -17,7 +17,7 @@ def checkout(evidenceIDList):
     #verify input
     if evidenceIDList == None:
         print("no evidence id provided!")
-        dieWithError()
+        exit(666)
 
     for evidenceID in evidenceIDList:
         for block in blockList:
@@ -29,7 +29,7 @@ def checkout(evidenceIDList):
         #if the evidenceID doesn't exist
         if recentBlock == None:
             print("no block exists with that evidence id!")
-            dieWithError()
+            exit(666)
 
         tempState = "".join(e for e in recentBlock.state if e.isalnum())
         if tempState == "CHECKEDIN":
@@ -50,5 +50,5 @@ def checkout(evidenceIDList):
 
         else:
             print("block must be checkedin to be checked out!")
-            dieWithError()
+            exit(666)
     return
