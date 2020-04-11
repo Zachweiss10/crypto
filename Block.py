@@ -5,8 +5,8 @@ import sys
 import datetime
 import uuid
 import struct
-#BCHOC_FILE_PATH = os.environ['BCHOC_FILE_PATH'].strip()
-BCHOC_FILE_PATH = './blocParty'
+BCHOC_FILE_PATH = os.environ['BCHOC_FILE_PATH'].strip()
+#BCHOC_FILE_PATH = './blocParty'
 class Block:
 
     def __init__(self,
