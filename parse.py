@@ -3,10 +3,12 @@ import os.path
 import sys
 import datetime
 import struct
+import binascii
 from Block import Block, BCHOC_FILE_PATH
 blockList = []
 itemIDS = []
 theCaseID = ""
+count = -1
 
 def parse():
     global theCaseID
@@ -67,7 +69,7 @@ def parse():
             readBlock = Block()
             readBlock.unpackData(datax)
             #set previous hash
-            pHash = data[currPos:currPos + 20].decode('ascii')
+            pHash = hashlib.sha1(binascii.hexlify(data[currPos:currPos + 20]))
             #print("next block found in parser")
             #print("pHash is: {0}".format(pHash))
             currPos += 24
