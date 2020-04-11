@@ -40,7 +40,11 @@ def init():
         data = blockFile.read()
         blockFile.close()
         block = Block()
-        block.unpackData(data)
+        try:
+            block.unpackData(data)
+        except:
+            print("invalid block")
+            dieWithError()
         print("Blockchain file found with INITIAL block.")
         dieWithSuccess()
     else:
