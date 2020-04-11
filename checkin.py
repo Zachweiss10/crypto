@@ -34,8 +34,13 @@ def checkin(evidenceIDList):
 
         tempState = "".join(e for e in recentBlock.state if e.isalnum())
         if tempState == "CHECKEDOUT":
-            pHash = blockList[-1].getHash()
-            newBlock = Block(prevHash=pHash.hexdigest().encode(), caseID=recentBlock.caseID, evidenceID=evidenceID[0], state="CHECKEDOUT", dataLength=0, data="" )
+            pHash = bytes(0x00)
+            newBlock = Block(prevHash=pHash, 
+            	caseID=recentBlock.caseID, 
+            	evidenceID=evidenceID[0], 
+            	state="CHECKEDIN", 
+            	dataLength=0, 
+            	data="" )
             data = newBlock.packData()
             blockFile = open(BCHOC_FILE_PATH, 'ab')
             blockFile.write(data)

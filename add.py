@@ -35,7 +35,6 @@ def add(caseId, itemID):
     print(z)
     #check if any of the itemIds have duplicates in the entire blockchain
     if len(z) != 0:
-        print(x.intersection(y))
         print("ERROR: item is contained on the blockchain already") 
         exit(666) 
     #print(itemIDS)

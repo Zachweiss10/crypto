@@ -48,6 +48,6 @@ def checkout(evidenceIDList):
             print("\tTime of action: {t}".format(t=dt_iso))
 
         else:
-            print("block must be checkedin to be checked out!")
+            print("block must be CHECKEDOUT to be CHECKEDIN!")
             exit(666)
     return
