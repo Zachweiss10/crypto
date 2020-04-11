@@ -7,13 +7,10 @@ import struct
 import argparse
 import maya
 from add import add
-from Block import Block
+from Block import Block, BCHOC_FILE_PATH
 from parse import parse, itemIDS, blockList
 from checkout import checkout
 import uuid
-
-
-BCHOC_FILE_PATH = os.environ['BCHOC_FILE_PATH'].strip()
 
 
 # Successful commands should exit with 0
@@ -46,7 +43,7 @@ def init():
         print("Blockchain file found with INITIAL block.")
         dieWithSuccess()
     else:
-        packedData = Block(prevHash=bytes(0x00), state="INITIAL", caseID="00000000-0000-0000-0000-000000000000", evidenceID=0, dataLength=14, data="Initial Block").packData()
+        packedData = Block(prevHash=bytes(0x00), timestamp=0, state="INITIAL", caseID="00000000-0000-0000-0000-000000000000", evidenceID=0, dataLength=14, data="Initial block").packData()
         blockFile = open(BCHOC_FILE_PATH, 'wb')
         blockFile.write(packedData)
         blockFile.close()
@@ -95,8 +92,12 @@ def log(reverse, numberOfEntries, itemID=None, caseID = None):
 
     if(reverse):
         for x in range(numberOfEntries -1, -1, -1):
-            dt = datetime.datetime.fromtimestamp(printList[x].timestamp)
-            dt_iso = dt.isoformat()
+            if printList[x].timestamp == 0:
+                dt_iso = 0
+
+            else:
+                dt = datetime.datetime.fromtimestamp(printList[x].timestamp)
+                dt_iso = dt.isoformat()
             print("Case: {c}".format(c=(printList[x].caseID) ) )
             print("Item: {i}".format(i=printList[x].evidenceID) )
             print("Action: {a}".format(a=printList[x].state) )
@@ -104,8 +105,12 @@ def log(reverse, numberOfEntries, itemID=None, caseID = None):
             print("")
     else:
         for x in range(numberOfEntries):
-            dt = datetime.datetime.fromtimestamp(printList[x].timestamp)
-            dt_iso = dt.isoformat()
+            if printList[x].timestamp == 0:
+                dt_iso = 0
+
+            else:
+                dt = datetime.datetime.fromtimestamp(printList[x].timestamp)
+                dt_iso = dt.isoformat()
             print("Case: {c}".format(c=(printList[x].caseID) ) )
             print("Item: {i}".format(i=printList[x].evidenceID) )
             print("Action: {a}".format(a=printList[x].state) )
@@ -138,7 +143,7 @@ def main():
     if (command == "init"):
         init()
     elif command == "add":
-        if not os.path.exists("./blocParty"):
+        if not os.path.exists(BCHOC_FILE_PATH):
             init()
         add(caseID, evidenceID)
     elif command == "checkout":

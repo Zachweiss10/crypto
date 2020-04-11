@@ -4,12 +4,9 @@ import os.path
 import sys
 import datetime
 import struct
-from Block import Block
+from Block import Block, BCHOC_FILE_PATH
 from parse import parse, itemIDS, blockList, theCaseID
 
-
-
-BCHOC_FILE_PATH = os.environ['BCHOC_FILE_PATH'].strip()
 
 def add(caseId, itemID):
     #need to hash parent
@@ -17,34 +14,35 @@ def add(caseId, itemID):
     global theCaseID
     parse()
     num = len(blockList)
+    #check if item id's were passed
+    if itemID == None:
+        print("No itemIDs were passed")
+        exit(666)
     itemID = sum(itemID, [])
     parent = blockList[num-1]
     prevHash = parent.getHash()
     prevHash = prevHash.hexdigest()
 
-
-    #check if caseID is the same as the stored item id's case
-        #strip excess null bytes
-    caseID_str = blockList[num-1].caseID
-    if num>1:
-        if caseID_str != caseId:
-            print(caseID_str)
-            print(caseId)
-            print("ERROR: caseIDs don't match")
-            exit(666)
-
     #check if command contains duplicate itemId's enter by user
     if len(itemID) !=len(set(itemID)):
         print("ERROR: item duplicate")
-        exit(0)
+        exit(666)
 
 
+    x = set(itemID)
+    y = set(itemIDS)
+    z = x.intersection(y)
+    print(z)
     #check if any of the itemIds have duplicates in the entire blockchain
-    itemIDS += itemID
-    if len(itemIDS) !=len(set(itemIDS)):
+    if len(z) != 0:
+        print(x.intersection(y))
         print("ERROR: item is contained on the blockchain already") 
         exit(666) 
     #print(itemIDS)
+
+    #check if caseID is blank
+    if caseId == "":
+        exit(666)
 
 
     #append the block

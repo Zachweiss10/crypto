@@ -3,12 +3,10 @@ import os.path
 import sys
 import datetime
 import struct
-from Block import Block
+from Block import Block, BCHOC_FILE_PATH
 blockList = []
 itemIDS = []
 theCaseID = ""
-
-BCHOC_FILE_PATH = os.environ['BCHOC_FILE_PATH'].strip()
 
 def parse():
     global theCaseID
