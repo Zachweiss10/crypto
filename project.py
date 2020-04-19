@@ -5,12 +5,12 @@ import sys
 import datetime
 import struct
 import argparse
-import maya
 from add import add
 from Block import Block, BCHOC_FILE_PATH
 from parse import parse, itemIDS, blockList, count
 from checkout import checkout
 from checkin import checkin
+from remove import remove
 import uuid
 
 
@@ -123,9 +123,6 @@ def log(reverse, numberOfEntries, itemID=None, caseID = None):
             print("")
     return
 
-def remove():
-    return
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("command", action="store", type=str)
@@ -158,7 +155,7 @@ def main():
     elif command == "log":
         log(reverse, listNum)
     elif command == "remove":
-        remove()
+        remove(evidenceID, reason, owner)
     elif command == "verify":
         if(checkExist()):
             try:
