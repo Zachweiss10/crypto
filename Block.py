@@ -6,7 +6,7 @@ import datetime
 import uuid
 import struct
 BCHOC_FILE_PATH = os.environ['BCHOC_FILE_PATH'].strip()
-
+#BCHOC_FILE_PATH = './blocParty'
 class Block:
 
     def __init__(self,
@@ -33,22 +33,22 @@ class Block:
             self.timestamp = currTime.timestamp()
         if ( self.prevHash == None ):
             print( "No hash provided, the data couldn't be packed")
-            return
+            exit(666)
         if ( self.caseID == None ):
             print( "No caseID provided, the data couldn't be packed")
-            return
+            exit(666)
         if ( self.evidenceID == None ):
             print( "No evidenceID provided, the data couldn't be packed")
-            return
+            exit(666)
         if ( self.state == None ):
             print( "No state provided, the data couldn't be packed")
-            return
+            exit(666)
         if ( self.dataLength == None ):
             print( "No dataLength provided, the data couldn't be packed")
-            return
+            exit(666)
         if ( self.data == None and self.dataLength != 0):
             print( "No data provided, the data couldn't be packed")
-            return
+            exit(666)
         uuidString = self.caseID.replace("-", "")
         uuidString = "".join([ uuidString[x:x+2][::-1] for x in range(0, len(uuidString), 2)])
         uuidItem = uuid.UUID(uuidString[::-1])
