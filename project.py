@@ -12,6 +12,7 @@ from checkout import checkout
 from checkin import checkin
 from remove import remove
 from verify import verify
+import re
 import uuid
 
 
@@ -49,7 +50,7 @@ def init():
         print("Blockchain file found with INITIAL block.")
         dieWithSuccess()
     else:
-        packedData = Block(prevHash=bytes(0x00), timestamp=0, state="INITIAL", caseID="00000000-0000-0000-0000-000000000000", evidenceID=0, dataLength=14, data="Initial block").packData()
+        packedData = Block(prevHash=bytes(0x00), state="INITIAL", caseID="00000000-0000-0000-0000-000000000000", evidenceID=0, dataLength=14, data="Initial block").packData()
         blockFile = open(BCHOC_FILE_PATH, 'wb')
         blockFile.write(packedData)
         blockFile.close()
@@ -60,7 +61,7 @@ def init():
 
 
 
-def log(reverse, numberOfEntries, itemID=None, caseID = None):
+def log(reverse, numberOfEntries, itemID=None, caseID=None):
     parse()
     caseList = []
     itemList = []
@@ -74,27 +75,26 @@ def log(reverse, numberOfEntries, itemID=None, caseID = None):
         for block in blockList:
             if caseID == block.caseID:
                 caseList.append(block)
-        if len(caseList) == 0 :
-            print("no entries match that case ID!")
-            dieWithError()
     else:
         caseList = blockList
 
     if itemID != None:
-        for block in blockList:
-            if itemID == block.evidenceID:
-                itemList.append(block)
-        if len(itemList) == 0 :
-            print("no entries match that evidence ID!")
-            dieWithError()
+
+        for item in itemID:
+            for block in blockList:
+                if item[0] == block.evidenceID:
+                    itemList.append(block)
     else:
         itemList = blockList
 
     printList = [value for value in itemList if value in caseList]
 
+
     if numberOfEntries == None:
         numberOfEntries = len(printList)
 
+    if numberOfEntries > len(printList):
+        numberOfEntries = len(printList)
 
     if(reverse):
         for x in range(numberOfEntries -1, -1, -1):
@@ -106,7 +106,7 @@ def log(reverse, numberOfEntries, itemID=None, caseID = None):
                 dt_iso = dt.isoformat()
             print("Case: {c}".format(c=(printList[x].caseID) ) )
             print("Item: {i}".format(i=printList[x].evidenceID) )
-            print("Action: {a}".format(a=printList[x].state) )
+            print("Action: {a}".format(a=printList[x].state.rstrip(' \t\r\n\0') ) )
             print("Time: {t}".format(t=dt_iso))
             print("")
     else:
@@ -119,7 +119,7 @@ def log(reverse, numberOfEntries, itemID=None, caseID = None):
                 dt_iso = dt.isoformat()
             print("Case: {c}".format(c=(printList[x].caseID) ) )
             print("Item: {i}".format(i=printList[x].evidenceID) )
-            print("Action: {a}".format(a=printList[x].state) )
+            print("Action: {a}".format(a=printList[x].state.rstrip(' \t\r\n\0') ) )
             print("Time: {t}".format(t=dt_iso))
             print("")
     return
@@ -129,19 +129,19 @@ def main():
     ap.add_argument("command", action="store", type=str)
     ap.add_argument("-c", required=False, type=str)
     ap.add_argument("-i", required=False, action="append", nargs="+", type=int)
-    ap.add_argument("-r", action="store_true")
+    ap.add_argument("-r", "--reverse", action="store_true")
     ap.add_argument("-n", required=False, type=int)
     ap.add_argument("-o", required=False, type=str)
-    ap.add_argument("-y", required=False, type=str)
+    ap.add_argument("-y", "--why", required=False, type=str)
 
     args = ap.parse_args()
     command = args.command
     caseID = args.c
     evidenceID = args.i
-    reverse = args.r
+    reverse = args.reverse
     listNum = args.n
     owner = args.o
-    reason = args.y
+    reason = args.why
 
     if (command == "init"):
         init()
@@ -154,7 +154,7 @@ def main():
     elif command == "checkin":
         checkin(evidenceID)
     elif command == "log":
-        log(reverse, listNum)
+        log(reverse, listNum, evidenceID, caseID)
     elif command == "remove":
         remove(evidenceID, reason, owner)
     elif command == "verify":
