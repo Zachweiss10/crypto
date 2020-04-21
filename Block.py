@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 import hashlib
-import os.path
+import os.path, os
 import sys
 import datetime
 import struct
-BCHOC_FILE_PATH = "./blocParty"
+
 
 class Block:
-
     def __init__(self,
                  prevHash=None,
                  timestamp=None,

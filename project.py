@@ -5,13 +5,12 @@ import sys
 import datetime
 import struct
 import argparse
-import maya
 from add import add
 from Block import Block
-from parse import *
+from parse import parse,itemIDS, blockList, theCaseID, BCHOC_FILE_PATH
+from checkout import checkout
+from checkin import checkin
 
-
-BCHOC_FILE_PATH = "./blocParty"
 
 class Block:
 
@@ -189,7 +188,7 @@ def main():
         remove()
     elif command == "verify":
         if(checkExist()):
-            returnList = parse()
+            verify()
             print("Initialblock is: prevHash-{0}, timeStamp-{1}, caseID-{2}, itemID-{3}, state-{4}, dataLength-{5}, dataString-{6}".format(returnList[0].prevHash, returnList[0].timestamp, returnList[0].caseID, returnList[0].evidenceID, returnList[0].state, returnList[0].dataLength, returnList[0].data))
         else:
             print("Transactions in blockchain: 0")

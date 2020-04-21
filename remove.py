@@ -5,7 +5,7 @@ import sys
 import datetime
 import struct
 from Block import Block, BCHOC_FILE_PATH
-from parse import parse, itemIDS, blockList, theCaseID
+from parse import parse, itemIDS, blockList, theCaseID, BCHOC_FILE_PATH
 
 
 def remove(evidenceIDList, reason, owner):

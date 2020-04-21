@@ -4,8 +4,8 @@ import os.path
 import sys
 import datetime
 import struct
-from Block import Block, BCHOC_FILE_PATH
-from parse import parse, itemIDS, blockList, theCaseID
+from Block import Block
+from parse import parse, itemIDS, blockList, theCaseID, BCHOC_FILE_PATH
 
 '''Add a new checkin entry to the chain of custody for the given evidence item. 
 Checkin actions may only be performed on evidence items that have already been 

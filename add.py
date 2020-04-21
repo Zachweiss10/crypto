@@ -5,21 +5,47 @@ import sys
 import datetime
 import struct
 from Block import Block
-from parse import *
+from parse import parse, itemIDS, blockList, theCaseID, BCHOC_FILE_PATH
 
-BCHOC_FILE_PATH = "./blocParty"
 
 def add(caseId, itemID):
-    #check if blockchain file exists
-
-
-
     #need to hash parent
+    global itemIDS
+    global theCaseID
+    prevHash = Block()
+    parse()
+    num = len(blockList)
+    #check if item id's were passed
+    if itemID == None:
+        print("No itemIDs were passed")
+        exit(666)
+    itemID = sum(itemID, [])
+    parent = blockList[num-1]
+    if prevHash != None:
+        prevHash = parent.getHash()
+        prevHash = prevHash.hexdigest()
+    else:
+        exit(666)
+
+    #check if command contains duplicate itemId's enter by user
+    if len(itemID) !=len(set(itemID)):
+        print("ERROR: item duplicate")
+        exit(666)
 
 
+    x = set(itemID)
+    y = set(itemIDS)
+    z = x.intersection(y)
+    print(z)
+    #check if any of the itemIds have duplicates in the entire blockchain
+    if len(z) != 0:
+        print("ERROR: item is contained on the blockchain already") 
+        exit(666) 
+    #print(itemIDS)
 
-    #check
-
+    #check if caseID is blank
+    if caseId == "":
+        exit(666)
     #append the block
     blockFile = open(BCHOC_FILE_PATH, 'ab') 
     for j in range(0, len(itemID)):
