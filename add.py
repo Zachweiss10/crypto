@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 import hashlib
 import os.path
@@ -42,7 +43,6 @@ def add(caseId, itemID):
     #check if caseID is blank
     if caseId == "":
         exit(666)
-
 
     #append the block
     blockFile = open(BCHOC_FILE_PATH, 'ab') 
