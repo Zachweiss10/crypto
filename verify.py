@@ -15,16 +15,16 @@ def verify():
 	removedSet = set()
 	parentSet = set()
 	hashSet = set()
-	removedReasonsSet = set("DISPOSED", "DESTROYED", "RELEASED")
+	removedReasonsSet = set(["DISPOSED", "DESTROYED", "RELEASED"])
 	errID = 0
 	blockTot = 0
 	errBlock = ""
 	dupParentErr = ""
 	prevHash = None
+	prevBlock = None
 	parse()
 
 	for blk in blockList:
-
 	    blockTot += 1
 	    thisBlockHash = blk.getHash()
 
@@ -97,7 +97,7 @@ def verify():
 	        errBlock = thisBlockHash
 
 	    # If this item's has a different hash than it should (according to next block's prevHash), give error
-	    elif prevHash != None
+	    elif prevHash is not None and prevBlock is not None:
 	    	if (blk.prevHash != prevBlock.getHash()):
 	        	errID = 11
 	        	errBlock = blk.prevHash
@@ -152,5 +152,4 @@ def verify():
 
 	    elif (errID == 11):
 	        print ("Block contents do not match block checksum.")
-
-    exit(666)
+	exit(666)

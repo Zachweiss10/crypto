@@ -11,6 +11,7 @@ from parse import parse, itemIDS, blockList, count
 from checkout import checkout
 from checkin import checkin
 from remove import remove
+from verify import verify
 import uuid
 
 
@@ -163,6 +164,7 @@ def main():
             except:
                 print("invalid block after initial")
                 dieWithError()
+            verify()
             #causes error
             #print("Initialblock is: prevHash-{0}, timeStamp-{1}, caseID-{2}, itemID-{3}, state-{4}, dataLength-{5}, dataString-{6}".format(returnList[0].prevHash, returnList[0].timestamp, returnList[0].caseID, returnList[0].evidenceID, returnList[0].state, returnList[0].dataLength, returnList[0].data))
         else:
