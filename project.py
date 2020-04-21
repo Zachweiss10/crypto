@@ -6,83 +6,14 @@ import datetime
 import struct
 import argparse
 from add import add
-from Block import Block
-from parse import *
-
-
-BCHOC_FILE_PATH = "./blocParty"
-
-class Block:
-
-    def __init__(self,
-                 prevHash=None,
-                 timestamp=None,
-                 caseID=None,
-                 evidenceID=None,
-                 state=None,
-                 dataLength=None,
-                 data=None ):
-        self.prevHash = prevHash
-        self.timestamp = timestamp
-        self.caseID = caseID
-        self.evidenceID = evidenceID
-        self.state = state
-        self.dataLength = dataLength
-        self.data = data
-        self._dataString = None
-        self._hash = None
-
-    def packData(self):
-        if ( self.timestamp == None ):
-            currTime = datetime.datetime.now(datetime.timezone.utc)
-            self.timestamp = currTime.timestamp()
-        if ( self.prevHash == None ):
-            print( "No hash provided, the data couldn't be packed")
-            return
-        if ( self.caseID == None ):
-            print( "No caseID provided, the data couldn't be packed")
-            return
-        if ( self.evidenceID == None ):
-            print( "No evidenceID provided, the data couldn't be packed")
-            return
-        if ( self.state == None ):
-            print( "No state provided, the data couldn't be packed")
-            return
-        if ( self.dataLength == None ):
-            print( "No dataLength provided, the data couldn't be packed")
-            return
-        if ( self.data == None and self.dataLength != 0):
-            print( "No data provided, the data couldn't be packed")
-            return
-        fmtString = "20s d 16s I 11s I {dataLength}s".format(dataLength=self.dataLength)
-        packedData = struct.pack(fmtString, self.prevHash, self.timestamp, self.caseID, self.evidenceID,
-                                 self.state.encode(), self.dataLength, self.data.encode())
-        self._dataString = packedData
-        self._hash = hashlib.sha1(packedData)
-        return packedData
-
-    def unpackData(self, data):
-        unpackedData = struct.unpack_from("20s d 16s I 11s I", data, 0)
-        self.prevHash = unpackedData[0]
-        self.timestamp = unpackedData[1]
-        self.caseID = unpackedData[2]
-        self.evidenceID = unpackedData[3]
-        self.state = (unpackedData[4]).decode()
-        self.dataLength = unpackedData[5]
-        unpackedData = struct.unpack_from("{dataLength}s".format(dataLength=self.dataLength), data, 68)
-        self.data = (unpackedData[0]).decode()
-
-        self._dataString = data[0:68 + self.dataLength]
-        self._hash = hashlib.sha1(self._dataString)
-
-    def getHash(self):
-        if self._hash != None:
-            return self._hash
-        if self._dataString != None:
-            return hashlib.sha1(self._dataString)
-
-        print("Get hash was called on a block without data! Call pack or unpack data to generate a hash")
-        return 0
+from Block import Block, BCHOC_FILE_PATH
+from parse import parse, itemIDS, blockList, count
+from checkout import checkout
+from checkin import checkin
+from remove import remove
+from verify import verify
+import re
+import uuid
 
 
 # Successful commands should exit with 0
@@ -111,11 +42,15 @@ def init():
         data = blockFile.read()
         blockFile.close()
         block = Block()
-        block.unpackData(data)
+        try:
+            block.unpackData(data)
+        except:
+            print("invalid block")
+            dieWithError()
         print("Blockchain file found with INITIAL block.")
         dieWithSuccess()
     else:
-        packedData = Block(prevHash=bytes(0x00), state="INITIAL", caseID=bytes(0x00), evidenceID=0, dataLength=14, data="Initial Block").packData()
+        packedData = Block(prevHash=bytes(0x00), state="INITIAL", caseID="00000000-0000-0000-0000-000000000000", evidenceID=0, dataLength=14, data="Initial block").packData()
         blockFile = open(BCHOC_FILE_PATH, 'wb')
         blockFile.write(packedData)
         blockFile.close()
@@ -125,36 +60,68 @@ def init():
 #add command created n numbers of items for a specific caseID
 
 
-def checkout(evidenceID):
-    maxTime = 0
-    recentBlock = None
 
-    #verify input
-    if evidenceID == None:
+def log(reverse, numberOfEntries, itemID=None, caseID=None):
+    parse()
+    caseList = []
+    itemList = []
+    printList = []
+
+    if blockList == None:
+        print("there are no blocks to be printed!")
         dieWithError()
 
-    for block in blockList:
-        if evidenceID == block.evidenceID:
-            if block.timestamp > maxTime:
-                maxTime = max(maxTime, block.timestamp)
-                recentBlock = block
+    if caseID != None:
+        for block in blockList:
+            if caseID == block.caseID:
+                caseList.append(block)
+    else:
+        caseList = blockList
 
-    #if the evidenceID doesn't exist
-    if recentBlock == None:
-        dieWithError()
+    if itemID != None:
 
-    if recentBlock.state == "CHECKEDIN":
-        newBlock = Block()
+        for item in itemID:
+            for block in blockList:
+                if item[0] == block.evidenceID:
+                    itemList.append(block)
+    else:
+        itemList = blockList
+
+    printList = [value for value in itemList if value in caseList]
 
 
+    if numberOfEntries == None:
+        numberOfEntries = len(printList)
 
+    if numberOfEntries > len(printList):
+        numberOfEntries = len(printList)
 
-    return
+    if(reverse):
+        for x in range(numberOfEntries -1, -1, -1):
+            if printList[x].timestamp == 0:
+                dt_iso = 0
 
-def log():
-    return
+            else:
+                dt = datetime.datetime.fromtimestamp(printList[x].timestamp)
+                dt_iso = dt.isoformat()
+            print("Case: {c}".format(c=(printList[x].caseID) ) )
+            print("Item: {i}".format(i=printList[x].evidenceID) )
+            print("Action: {a}".format(a=printList[x].state.rstrip(' \t\r\n\0') ) )
+            print("Time: {t}".format(t=dt_iso))
+            print("")
+    else:
+        for x in range(numberOfEntries):
+            if printList[x].timestamp == 0:
+                dt_iso = 0
 
-def remove():
+            else:
+                dt = datetime.datetime.fromtimestamp(printList[x].timestamp)
+                dt_iso = dt.isoformat()
+            print("Case: {c}".format(c=(printList[x].caseID) ) )
+            print("Item: {i}".format(i=printList[x].evidenceID) )
+            print("Action: {a}".format(a=printList[x].state.rstrip(' \t\r\n\0') ) )
+            print("Time: {t}".format(t=dt_iso))
+            print("")
     return
 
 def main():
@@ -162,34 +129,44 @@ def main():
     ap.add_argument("command", action="store", type=str)
     ap.add_argument("-c", required=False, type=str)
     ap.add_argument("-i", required=False, action="append", nargs="+", type=int)
-    ap.add_argument("-r", required=False, type=bool)
+    ap.add_argument("-r", "--reverse", action="store_true")
     ap.add_argument("-n", required=False, type=int)
     ap.add_argument("-o", required=False, type=str)
+    ap.add_argument("-y", "--why", required=False, type=str)
 
     args = ap.parse_args()
     command = args.command
     caseID = args.c
     evidenceID = args.i
-    reverse = args.r
+    reverse = args.reverse
     listNum = args.n
-    identification = args.o
+    owner = args.o
+    reason = args.why
 
     if (command == "init"):
         init()
     elif command == "add":
         if not os.path.exists(BCHOC_FILE_PATH):
-            dieWithError()
+            init()
         add(caseID, evidenceID)
     elif command == "checkout":
         checkout(evidenceID)
+    elif command == "checkin":
+        checkin(evidenceID)
     elif command == "log":
-        log(reverse, listNum)
+        log(reverse, listNum, evidenceID, caseID)
     elif command == "remove":
-        remove()
+        remove(evidenceID, reason, owner)
     elif command == "verify":
         if(checkExist()):
-            returnList = parse()
-            print("Initialblock is: prevHash-{0}, timeStamp-{1}, caseID-{2}, itemID-{3}, state-{4}, dataLength-{5}, dataString-{6}".format(returnList[0].prevHash, returnList[0].timestamp, returnList[0].caseID, returnList[0].evidenceID, returnList[0].state, returnList[0].dataLength, returnList[0].data))
+            try:
+                returnList = parse()
+            except:
+                print("invalid block after initial")
+                dieWithError()
+            verify()
+            #causes error
+            #print("Initialblock is: prevHash-{0}, timeStamp-{1}, caseID-{2}, itemID-{3}, state-{4}, dataLength-{5}, dataString-{6}".format(returnList[0].prevHash, returnList[0].timestamp, returnList[0].caseID, returnList[0].evidenceID, returnList[0].state, returnList[0].dataLength, returnList[0].data))
         else:
             print("Transactions in blockchain: 0")
             print("State of blockchain: ERROR")
