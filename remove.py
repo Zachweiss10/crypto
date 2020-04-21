@@ -10,9 +10,11 @@ from parse import parse, itemIDS, blockList, theCaseID
 
 
 def remove(evidenceIDList, reason, owner):
-	if reason == "DISPOSED" or reason == "DESTROYED" or reason == "RELEASED":
-		print(evidenceIDList)
-		if owner == None:
+	if (reason == "DISPOSED" or reason == "DESTROYED" or reason == "RELEASED"):
+		print(owner)
+		if reason == "RELEASED" and owner == None:
+			exit(666)
+		elif owner == None:
 			length = 0
 			data_to_pack = ""
 		else:
