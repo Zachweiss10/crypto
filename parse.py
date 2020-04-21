@@ -1,17 +1,14 @@
-#!/usr/bin/env python3
 import hashlib
 import os.path
 import sys
 import datetime
 import struct
 import binascii
+from Block import Block, BCHOC_FILE_PATH
 blockList = []
 itemIDS = []
 theCaseID = ""
 count = -1
-from Block import Block
-BCHOC_FILE_PATH = "./blocParty"
-#BCHOC_FILE_PATH = os.environ['BCHOC_FILE_PATH'].strip()
 
 def parse():
     global theCaseID

@@ -4,8 +4,8 @@ import os.path
 import sys
 import datetime
 import struct
-from Block import Block
-from parse import parse, itemIDS, blockList, theCaseID, BCHOC_FILE_PATH
+from Block import Block, BCHOC_FILE_PATH
+from parse import parse, itemIDS, blockList, theCaseID
 
 '''Add a new checkin entry to the chain of custody for the given evidence item. 
 Checkin actions may only be performed on evidence items that have already been 
@@ -36,11 +36,11 @@ def checkin(evidenceIDList):
         if tempState == "CHECKEDOUT":
             pHash = bytes(0x00)
             newBlock = Block(prevHash=pHash, 
-            	caseID=recentBlock.caseID, 
-            	evidenceID=evidenceID[0], 
-            	state="CHECKEDIN", 
-            	dataLength=0, 
-            	data="" )
+                caseID=recentBlock.caseID, 
+                evidenceID=evidenceID[0], 
+                state="CHECKEDIN", 
+                dataLength=0, 
+                data="" )
             data = newBlock.packData()
             blockFile = open(BCHOC_FILE_PATH, 'ab')
             blockFile.write(data)

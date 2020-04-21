@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 import hashlib
 import os.path
@@ -5,7 +6,7 @@ import sys
 import datetime
 import struct
 from Block import Block, BCHOC_FILE_PATH
-from parse import parse, itemIDS, blockList, theCaseID, BCHOC_FILE_PATH
+from parse import parse, itemIDS, blockList, theCaseID
 
 
 def remove(evidenceIDList, reason, owner):

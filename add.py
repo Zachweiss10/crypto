@@ -1,18 +1,18 @@
+
 #!/usr/bin/env python3
 import hashlib
 import os.path
 import sys
 import datetime
 import struct
-from Block import Block
-from parse import parse, itemIDS, blockList, theCaseID, BCHOC_FILE_PATH
+from Block import Block, BCHOC_FILE_PATH
+from parse import parse, itemIDS, blockList, theCaseID
 
 
 def add(caseId, itemID):
     #need to hash parent
     global itemIDS
     global theCaseID
-    prevHash = Block()
     parse()
     num = len(blockList)
     #check if item id's were passed
@@ -21,11 +21,8 @@ def add(caseId, itemID):
         exit(666)
     itemID = sum(itemID, [])
     parent = blockList[num-1]
-    if prevHash != None:
-        prevHash = parent.getHash()
-        prevHash = prevHash.hexdigest()
-    else:
-        exit(666)
+    prevHash = parent.getHash()
+    prevHash = prevHash.hexdigest()
 
     #check if command contains duplicate itemId's enter by user
     if len(itemID) !=len(set(itemID)):
@@ -46,22 +43,29 @@ def add(caseId, itemID):
     #check if caseID is blank
     if caseId == "":
         exit(666)
+
+
     #append the block
     blockFile = open(BCHOC_FILE_PATH, 'ab') 
     for j in range(0, len(itemID)):
         currTime = datetime.datetime.now(datetime.timezone.utc)
         timestamp = currTime.timestamp()
-        #print(type(val))
-        #print(itemID)
-        #print(type(itemID[j]))
-        packedData = Block(prevHash=bytes(0x00), timestamp=timestamp, state="CHECKEDIN", caseID=bytes(0x00), evidenceID= int(itemID[j][0]), dataLength=0, data="").packData()
+        packedData = Block(prevHash=prevHash.encode(), timestamp=timestamp, state="CHECKEDIN", caseID=caseId, evidenceID= int(itemID[j]), dataLength=0, data="").packData()
         blockFile.write(packedData)
+        print("Case: ",end="")
+        print(caseId)
         print("Added item:",end=" ")
         print(itemID[j])
         print("  Status: CHECKEDIN")
         print("  Time of action: ",end="")
         print(currTime)
-
+        num = len(blockList)
+        #add to global list, create hash of recently added Block for next iteration
+        parent = Block()
+        parent.unpackData(packedData)
+        blockList.append(parent)
+        prevHash = parent.getHash()
+        prevHash = prevHash.hexdigest()
     blockFile.close()
 
     return 0
