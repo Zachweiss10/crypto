@@ -14,6 +14,7 @@ from parse import parse, itemIDS, blockList, theCaseID, BCHOC_FILE_PATH
 def verify():
 	checkedinSet = []
 	checkedoutSet = []
+	prevSet= []
 	removedSet = []
 	parentSet = []
 	hashSet = []
@@ -28,7 +29,7 @@ def verify():
 	print(len(blockList))
 	for blk in blockList:
 		blockTot += 1
-		thisBlockHash = blk.getHash().hexdigest()
+		thisBlockHash = blk.getHash().digest()
 		this_state = blk.state.strip('\x00')
 		print(hashSet)
 		print(parentSet) 
@@ -42,6 +43,12 @@ def verify():
 			errID = 0
 		# If current block has the same prevHash as another block
 		elif (prevHash in parentSet):
+			print("2")
+			errID = 2
+			errBlock = thisBlockHash
+			dupParentErr = prevHash
+
+		elif (blk.prevHash in prevSet):
 			print("2")
 			errID = 2
 			errBlock = thisBlockHash
@@ -82,6 +89,12 @@ def verify():
 				errID = 6
 				errBlock = thisBlockHash
 
+		elif (this_state == "REMOVED"):
+			print("5")
+			# If item checked in, check item out
+			if (blk.data == ""):
+				errID = 12
+
 		# Checking current block against all REMOVED blocks
 		elif (this_state in removedReasonsSet):
 			print("5")
@@ -116,11 +129,20 @@ def verify():
 		# If this item's has a different hash than it should (according to next block's prevHash), give error
 		elif prevHash is not None and prevBlock is not None:
 			print("8")
-			if (prevHash != prevBlock.getHash().hexdigest()):
+			if (prevHash != prevBlock.getHash().digest()):
 				errID = 11
 				errBlock = prevHash
-		if prevHash is not None:	
+
+		if prevHash is not None:
 			parentSet.append(prevHash)
+			if blk.prevHash[0:5] != prevHash[0:5]:
+				print("")
+				print("actual previous hash: " + str(blk.prevHash[0:5]) )
+				print("expected previous hash: " + str(prevHash[0:5]) )
+				errID = 2
+				errBlock = thisBlockHash
+				dupParentErr = prevHash
+
 		hashSet.append(thisBlockHash)
 		prevBlock = blk
 		prevHash = thisBlockHash
@@ -172,4 +194,7 @@ def verify():
 
 		elif (errID == 11):
 			print ("Block contents do not match block checksum.")
+
+		elif (errID == 11):
+			print ("Remove without owner.")
 	exit(666)

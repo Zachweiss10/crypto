@@ -22,7 +22,7 @@ def add(caseId, itemID):
     itemID = sum(itemID, [])
     parent = blockList[num-1]
     prevHash = parent.getHash()
-    prevHash = prevHash.hexdigest()
+    prevHash = prevHash.digest()
 
     #check if command contains duplicate itemId's enter by user
     if len(itemID) !=len(set(itemID)):
@@ -49,7 +49,7 @@ def add(caseId, itemID):
     for j in range(0, len(itemID)):
         currTime = datetime.datetime.now(datetime.timezone.utc)
         timestamp = currTime.timestamp()
-        packedData = Block(prevHash=prevHash.encode(), timestamp=timestamp, state="CHECKEDIN", caseID=caseId, evidenceID= int(itemID[j]), dataLength=0, data="").packData()
+        packedData = Block(prevHash=prevHash, timestamp=timestamp, state="CHECKEDIN", caseID=caseId, evidenceID= int(itemID[j]), dataLength=0, data="").packData()
         blockFile.write(packedData)
         print("Case: ",end="")
         print(caseId)
@@ -64,7 +64,7 @@ def add(caseId, itemID):
         parent.unpackData(packedData)
         blockList.append(parent)
         prevHash = parent.getHash()
-        prevHash = prevHash.hexdigest()
+        prevHash = prevHash.digest()
     blockFile.close()
 
     return 0
